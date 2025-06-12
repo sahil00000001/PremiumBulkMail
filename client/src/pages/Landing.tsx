@@ -46,7 +46,7 @@ export default function Landing() {
               </svg>
             </div>
             <h1 className="text-xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-              MassMarketingTool
+              Mass Marketing Tool
             </h1>
           </div>
         </div>
@@ -67,7 +67,7 @@ export default function Landing() {
                   className="flex justify-center"
                 >
                   <img 
-                    src="https://img.icons8.com/fluency/240/email-marketing.png" 
+                    src="https://raw.githubusercontent.com/sahil00000001/Shaik/refs/heads/main/078ea108-add5-4a65-b7c2-d598b7f120a1.png" 
                     alt="Email Marketing Illustration" 
                     className="w-64 h-64 object-contain drop-shadow-lg" 
                   />
@@ -86,7 +86,7 @@ export default function Landing() {
                     variants={itemVariants}
                     className="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600"
                   >
-                    MassMarketingTool
+                    It is Premium Bulk Email Marketing Tool
                   </motion.h1>
                   
                   <motion.h2 
@@ -145,7 +145,7 @@ export default function Landing() {
           
           {/* Wavy divider */}
           <div className="absolute bottom-0 left-0 right-0">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" className="w-full h-auto">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" className="w-full h-auto" style={{ display: 'none' }}>
               <path fill="#fff" fillOpacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,138.7C960,139,1056,117,1152,106.7C1248,96,1344,96,1392,96L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
             </svg>
           </div>
@@ -284,13 +284,14 @@ export default function Landing() {
               viewport={{ once: true }}
               className="bg-white rounded-2xl shadow-xl overflow-hidden"
             >
-              <div className="md:flex">
-                <div className="md:w-1/3 bg-gradient-to-br from-blue-600 to-indigo-700 p-8 text-white">
-                  <h3 className="text-2xl font-bold mb-4">About Me</h3>
-                  <div className="w-24 h-24 rounded-full bg-white/20 mx-auto mb-6 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-white" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                    </svg>
+               <div className="md:flex">
+        <div className="md:w-1/3 bg-gradient-to-br from-blue-600 to-indigo-700 p-8 text-white">
+          {/* Add text-center class here */}
+          <h3 className="text-2xl font-bold mb-4 text-center">About Me</h3>
+          <div className="w-24 h-24 rounded-full bg-white/20 mx-auto mb-6 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-white" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+            </svg>
                   </div>
                   <div className="space-y-2 text-center">
                     <p className="font-bold text-lg">Sahil Vashisht</p>
@@ -334,7 +335,7 @@ export default function Landing() {
                   <h3 className="text-2xl font-bold text-gray-900">Your Data is 100% Safe & Private</h3>
                 </div>
                 <p className="text-gray-700 mb-4">
-                  We've built MassMarketingTool with one non-negotiable principle — user data stays yours. We never collect, store, or share your personal info. Everything is handled and cached locally in your browser.
+                  We've built Mass Marketing Tool with one non-negotiable principle — user data stays yours. We never collect, store, or share your personal info. Everything is handled and cached locally in your browser.
                 </p>
                 <p className="text-gray-700 font-medium">
                   There are no hidden servers. No third-party data sync. No cloud upload. Just your Gmail, your device, and complete control.
@@ -391,7 +392,7 @@ export default function Landing() {
               <div className="w-2 h-2 rounded-full bg-blue-400"></div>
               <div className="w-2 h-2 rounded-full bg-indigo-400"></div>
             </div>
-            <p className="text-sm font-medium text-gray-800">MassMarketingTool</p>
+            <p className="text-sm font-medium text-gray-800">Mass Marketing Tool</p>
             <p className="text-xs text-gray-500 mt-1">Premium mass email solution</p>
           </div>
         </div>
