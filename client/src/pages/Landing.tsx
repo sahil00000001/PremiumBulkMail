@@ -3,6 +3,7 @@ import { useEmail } from "@/hooks/use-email";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
+import sahilImage from './Image (1).jpeg';
 
 export default function Landing() {
   const { setCurrentStep } = useEmail();
@@ -145,7 +146,7 @@ export default function Landing() {
           
           {/* Wavy divider */}
           <div className="absolute bottom-0 left-0 right-0">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" className="w-full h-auto" style={{ display: 'none' }}>
+            <svg xmlns="" viewBox="0 0 1440 320" className="w-full h-auto" style={{ display: 'none' }}>
               <path fill="#fff" fillOpacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,138.7C960,139,1056,117,1152,106.7C1248,96,1344,96,1392,96L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
             </svg>
           </div>
@@ -274,46 +275,57 @@ export default function Landing() {
           </div>
         </section>
         
-        {/* About Me Section */}
-        <section className="py-16 bg-blue-50">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="bg-white rounded-2xl shadow-xl overflow-hidden"
-            >
-               <div className="md:flex">
-        <div className="md:w-1/3 bg-gradient-to-br from-blue-600 to-indigo-700 p-8 text-white">
-          {/* Add text-center class here */}
-          <h3 className="text-2xl font-bold mb-4 text-center">About Me</h3>
-          <div className="w-24 h-24 rounded-full bg-white/20 mx-auto mb-6 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-white" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-            </svg>
-                  </div>
-                  <div className="space-y-2 text-center">
-                    <p className="font-bold text-lg">Sahil Vashisht</p>
-                    <p className="text-blue-100">Software Engineer</p>
-                    <p className="text-blue-100">PodTech</p>
-                  </div>
-                </div>
-                <div className="md:w-2/3 p-8">
-                  <p className="text-gray-700 mb-4">
-                    Hi, I'm Sahil Vashisht, a passionate Software Engineer currently working at PodTech. I completed my graduation from IP University and have been dedicated to building innovative digital solutions ever since.
-                  </p>
-                  <p className="text-gray-700 mb-6">
-                    If you have any questions, ideas, or projects you'd like to discuss, feel free to reach out to me at: <a href="mailto:vashishtsahilsahil99@gmail.com" className="text-blue-600 hover:underline">vashishtsahilsahil99@gmail.com</a>.
-                  </p>
-                  <p className="text-gray-700 font-medium">
-                    Thanks for visiting — I invite you to explore my work and take a look at my products!
-                  </p>
-                </div>
-              </div>
-            </motion.div>
+ {/* About Me Section */}
+<section className="py-16 bg-blue-50">
+  <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8 }}
+      viewport={{ once: true }}
+      className="bg-white rounded-2xl shadow-xl overflow-hidden"
+    >
+      <div className="md:flex">
+        <div className="md:w-1/3 relative h-80 md:h-auto"> {/* Container must be relative */}
+          <img
+        src={sahilImage}
+         alt="Sahil Vashisht"
+         className="absolute inset-0 w-full h-full object-cover"
+/>
+          {/* <div className="absolute inset-0 bg-black/50"></div> Optional dark overlay */}
+          <div className="absolute bottom-4 left-0 right-0 text-center text-white px-4">
+            <p className="font-bold text-lg">Sahil Vashisht</p>
+            <p className="text-sm">Software Engineer</p>
+            <p className="text-sm">PodTech</p>
           </div>
-        </section>
+        </div>
+        <div className="md:w-2/3 p-8">
+          <h3 className="text-2xl font-bold mb-4">About Me</h3>
+          <p className="text-gray-700 mb-4">
+            Hi, I'm Sahil Vashisht, a passionate Software Engineer currently working at PodTech.
+            I completed my graduation from IP University and have been dedicated to building
+            innovative digital solutions ever since.
+          </p>
+          <p className="text-gray-700 mb-6">
+            If you have any questions, ideas, or projects you'd like to discuss, feel free to reach
+            out to me at:{" "}
+            <a
+              href="mailto:vashishtsahilsahil99@gmail.com"
+              className="text-blue-600 hover:underline"
+            >
+              vashishtsahilsahil99@gmail.com
+            </a>
+            .
+          </p>
+          <p className="text-gray-700 font-medium">
+            Thanks for visiting — I invite you to explore my work and take a look at my products!
+          </p>
+        </div>
+      </div>
+    </motion.div>
+  </div>
+</section>
+
         
         {/* Data Privacy Statement */}
         <section className="py-16 bg-gray-50">
