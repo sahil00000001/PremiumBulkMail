@@ -318,13 +318,22 @@ export function EmailProvider({ children }: { children: ReactNode }) {
         const data = await response.json();
         if (data.recipients) {
           // Update recipients with fresh tracking data
-          setRecipients(data.recipients.map((r: any) => ({
+          const updatedRecipients = data.recipients.map((r: {
+            email: string;
+            data: string;
+            status: string;
+            trackingId?: string;
+            openedAt?: string | null;
+          }) => ({
             email: r.email,
             data: r.data,
             status: r.status,
             trackingId: r.trackingId,
             openedAt: r.openedAt
-          })));
+          }));
+          console.log('Refreshing tracking data:', updatedRecipients.length, 'recipients');
+          console.log('Recipients with opens:', updatedRecipients.filter(r => r.openedAt).length);
+          setRecipients(updatedRecipients);
         }
       }
     } catch (error) {

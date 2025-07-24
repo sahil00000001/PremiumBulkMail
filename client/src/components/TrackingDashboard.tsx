@@ -24,10 +24,13 @@ export default function TrackingDashboard() {
   const getTrackingStats = (): TrackingStats => {
     const total = recipients.length;
     const sent = recipients.filter(r => r.status === 'sent').length;
-    const opened = recipients.filter(r => r.openedAt).length;
+    const opened = recipients.filter(r => r.openedAt && r.openedAt !== null).length;
     const failed = recipients.filter(r => r.status === 'failed').length;
     const pending = recipients.filter(r => r.status === 'pending').length;
     const openRate = sent > 0 ? (opened / sent) * 100 : 0;
+
+    console.log('Dashboard stats:', { total, sent, opened, failed, pending, openRate });
+    console.log('Recipients with openedAt:', recipients.filter(r => r.openedAt).map(r => ({ email: r.email, openedAt: r.openedAt })));
 
     return { total, sent, opened, failed, pending, openRate };
   };
@@ -206,7 +209,7 @@ export default function TrackingDashboard() {
                         </div>
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {recipient.openedAt ? (
+                        {recipient.openedAt && recipient.openedAt !== null ? (
                           <div className="flex flex-col">
                             <span className="text-green-600 font-medium">✓ Email Opened</span>
                             <span className="text-xs text-gray-400">
