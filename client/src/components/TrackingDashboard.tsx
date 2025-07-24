@@ -16,7 +16,7 @@ interface TrackingStats {
 }
 
 export default function TrackingDashboard() {
-  const { recipients, batchId } = useEmail();
+  const { recipients, batchId, refreshTrackingData: contextRefresh } = useEmail();
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(new Date());
 
@@ -40,12 +40,8 @@ export default function TrackingDashboard() {
     
     setRefreshing(true);
     try {
-      const response = await fetch(`/api/recipients/${batchId}`);
-      if (response.ok) {
-        const data = await response.json();
-        // Update would be handled by the EmailProvider context
-        setLastUpdated(new Date());
-      }
+      await contextRefresh();
+      setLastUpdated(new Date());
     } catch (error) {
       console.error('Failed to refresh tracking data:', error);
     } finally {
@@ -53,11 +49,21 @@ export default function TrackingDashboard() {
     }
   };
 
-  // Auto-refresh every 30 seconds
+  // Auto-refresh every 10 seconds
   useEffect(() => {
-    const interval = setInterval(refreshTrackingData, 30000);
+    const interval = setInterval(refreshTrackingData, 10000);
     return () => clearInterval(interval);
   }, [batchId, refreshing]);
+
+  // Test function to simulate email opens for testing
+  const simulateEmailOpen = async (trackingId: string) => {
+    try {
+      await fetch(`/api/track/${trackingId}`);
+      await refreshTrackingData();
+    } catch (error) {
+      console.error('Failed to simulate email open:', error);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -227,11 +233,23 @@ export default function TrackingDashboard() {
                         )}
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap text-sm">
-                        {recipient.trackingId && (
-                          <code className="text-xs bg-gray-100 px-2 py-1 rounded">
-                            ID: {recipient.trackingId.slice(0, 8)}...
-                          </code>
-                        )}
+                        <div className="flex items-center space-x-2">
+                          {recipient.trackingId && recipient.status === 'sent' && !recipient.openedAt && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => simulateEmailOpen(recipient.trackingId!)}
+                              className="text-xs px-2 py-1"
+                            >
+                              Test Open
+                            </Button>
+                          )}
+                          {recipient.trackingId && (
+                            <code className="text-xs bg-gray-100 px-2 py-1 rounded">
+                              ID: {recipient.trackingId.slice(0, 8)}...
+                            </code>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   );
@@ -251,7 +269,7 @@ export default function TrackingDashboard() {
           <p>• Each email contains an invisible 1x1 pixel image unique to the recipient</p>
           <p>• When the recipient opens the email, the pixel loads and registers as "opened"</p>
           <p>• Tracking works best with HTML emails and may not work if images are blocked</p>
-          <p>• The dashboard refreshes automatically every 30 seconds to show new opens</p>
+          <p>• The dashboard refreshes automatically every 10 seconds to show new opens</p>
         </CardContent>
       </Card>
     </div>

@@ -28,6 +28,7 @@ type EmailContextType = {
   };
   sendEmails: () => Promise<void>;
   downloadSample: () => void;
+  refreshTrackingData: () => Promise<void>;
 };
 
 const EmailContext = createContext<EmailContextType | undefined>(undefined);
@@ -308,6 +309,29 @@ export function EmailProvider({ children }: { children: ReactNode }) {
     window.location.href = "/api/excel/sample";
   };
 
+  const refreshTrackingData = async () => {
+    if (!batchId) return;
+    
+    try {
+      const response = await fetch(`/api/recipients/${batchId}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.recipients) {
+          // Update recipients with fresh tracking data
+          setRecipients(data.recipients.map((r: any) => ({
+            email: r.email,
+            data: r.data,
+            status: r.status,
+            trackingId: r.trackingId,
+            openedAt: r.openedAt
+          })));
+        }
+      }
+    } catch (error) {
+      console.error('Failed to refresh tracking data:', error);
+    }
+  };
+
   return (
     <EmailContext.Provider
       value={{
@@ -328,7 +352,8 @@ export function EmailProvider({ children }: { children: ReactNode }) {
         isSending,
         sendingProgress,
         sendEmails,
-        downloadSample
+        downloadSample,
+        refreshTrackingData
       }}
     >
       {children}
