@@ -131,8 +131,13 @@ export class MemStorage implements IStorage {
   async updateRecipientTracking(trackingId: string, openedAt: string): Promise<void> {
     const email = Array.from(this.emailsMap.values()).find(e => e.trackingId === trackingId);
     if (email) {
+      console.log(`Updating tracking for ${trackingId}: ${email.email} opened at ${openedAt}`);
       email.openedAt = openedAt;
       this.emailsMap.set(email.id, email);
+      console.log(`Successfully updated tracking for ${email.email}`);
+    } else {
+      console.log(`No email found with tracking ID: ${trackingId}`);
+      console.log(`Available tracking IDs:`, Array.from(this.emailsMap.values()).map(e => e.trackingId));
     }
   }
 
