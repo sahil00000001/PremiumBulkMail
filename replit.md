@@ -31,6 +31,9 @@ A full-stack JavaScript application for bulk email marketing using Node.js, Expr
 - **2025-01-24**: Added comprehensive tracking dashboard showing open rates and detailed analytics
 - **2025-01-24**: Updated StatusBox component to show different states (pending, sent, opened, failed)
 - **2025-01-24**: Added new step 5 for tracking dashboard with real-time updates
+- **2025-01-24**: Fixed email tracking pixel implementation to ensure HTML emails with proper invisible tracking
+- **2025-01-24**: Enhanced tracking pixel with better Gmail compatibility and automatic HTML formatting
+- **2025-01-24**: Removed test buttons per user feedback - tracking now works automatically when emails are opened
 
 ## User Preferences
 - Standard full-stack JavaScript development patterns

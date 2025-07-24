@@ -19,9 +19,19 @@ export class EmailTemplateProcessor {
     // Replace @ variables in body
     let processedBody = this.replaceVariables(template, data);
     
-    // Add tracking pixel to body
+    // Ensure the body is HTML formatted
+    if (!processedBody.includes('<html') && !processedBody.includes('<body')) {
+      // Convert plain text to HTML
+      processedBody = `<html><body style="font-family: Arial, sans-serif;">${processedBody.replace(/\n/g, '<br>')}</body></html>`;
+    }
+    
+    // Add tracking pixel to body (before closing body tag if exists, otherwise at end)
     const trackingPixel = this.generateTrackingPixel(trackingId, baseUrl);
-    processedBody += trackingPixel;
+    if (processedBody.includes('</body>')) {
+      processedBody = processedBody.replace('</body>', `${trackingPixel}</body>`);
+    } else {
+      processedBody += trackingPixel;
+    }
     
     return {
       subject: processedSubject,
@@ -45,7 +55,7 @@ export class EmailTemplateProcessor {
    */
   private static generateTrackingPixel(trackingId: string, baseUrl: string): string {
     const trackingUrl = `${baseUrl}/api/track/${trackingId}`;
-    return `<img src="${trackingUrl}" width="1" height="1" style="display:none;" alt="">`;
+    return `\n\n<img src="${trackingUrl}" width="1" height="1" style="display:none;opacity:0;visibility:hidden;" alt="" border="0">`;
   }
   
   /**

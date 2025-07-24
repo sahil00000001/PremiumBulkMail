@@ -55,15 +55,7 @@ export default function TrackingDashboard() {
     return () => clearInterval(interval);
   }, [batchId, refreshing]);
 
-  // Test function to simulate email opens for testing
-  const simulateEmailOpen = async (trackingId: string) => {
-    try {
-      await fetch(`/api/track/${trackingId}`);
-      await refreshTrackingData();
-    } catch (error) {
-      console.error('Failed to simulate email open:', error);
-    }
-  };
+
 
   return (
     <div className="space-y-6">
@@ -233,23 +225,11 @@ export default function TrackingDashboard() {
                         )}
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap text-sm">
-                        <div className="flex items-center space-x-2">
-                          {recipient.trackingId && recipient.status === 'sent' && !recipient.openedAt && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => simulateEmailOpen(recipient.trackingId!)}
-                              className="text-xs px-2 py-1"
-                            >
-                              Test Open
-                            </Button>
-                          )}
-                          {recipient.trackingId && (
-                            <code className="text-xs bg-gray-100 px-2 py-1 rounded">
-                              ID: {recipient.trackingId.slice(0, 8)}...
-                            </code>
-                          )}
-                        </div>
+                        {recipient.trackingId && (
+                          <code className="text-xs bg-gray-100 px-2 py-1 rounded">
+                            ID: {recipient.trackingId.slice(0, 8)}...
+                          </code>
+                        )}
                       </td>
                     </tr>
                   );

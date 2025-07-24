@@ -91,6 +91,8 @@ export class EmailSender {
       };
       
       console.log(`Sending email to ${recipientEmail}...`);
+      console.log(`Email HTML content preview: ${processed.body.substring(processed.body.length - 200)}`);
+      console.log(`Tracking ID: ${processed.trackingId}`);
       
       const info = await this.transporter.sendMail(mailOptions);
       console.log(`Email sent to ${recipientEmail}: ${JSON.stringify(info)}`);
