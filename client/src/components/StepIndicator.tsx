@@ -22,8 +22,13 @@ const steps = [
   },
   {
     number: 4,
-    title: "Send & Report",
-    description: "View results",
+    title: "Send Emails",
+    description: "Send & monitor",
+  },
+  {
+    number: 5,
+    title: "Track Opens",
+    description: "Email tracking",
   },
 ];
 

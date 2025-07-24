@@ -1,24 +1,35 @@
 import { cn } from "@/lib/utils";
-import { CheckIcon, XIcon } from "lucide-react";
+import { CheckIcon, XIcon, MailIcon, MailOpenIcon, ClockIcon } from "lucide-react";
 
 interface StatusBoxProps {
   status: string;
+  openedAt?: string | null;
+  className?: string;
 }
 
-export default function StatusBox({ status }: StatusBoxProps) {
+export default function StatusBox({ status, openedAt, className }: StatusBoxProps) {
+  // Determine the actual display status
+  const displayStatus = status === "sent" && openedAt ? "opened" : status;
+  
   return (
     <div
       className={cn(
         "w-6 h-6 rounded flex items-center justify-center text-white transition-all duration-500",
-        status === "pending" && "bg-error-500",
-        status === "sent" && "bg-success-500 animate-status-change",
-        status === "failed" && "bg-error-500"
+        displayStatus === "pending" && "bg-yellow-500",
+        displayStatus === "sent" && "bg-blue-500 animate-status-change",
+        displayStatus === "opened" && "bg-green-500 animate-status-change",
+        displayStatus === "failed" && "bg-red-500",
+        className
       )}
     >
-      {status === "sent" ? (
-        <CheckIcon className="h-4 w-4" />
-      ) : (
+      {displayStatus === "sent" ? (
+        <MailIcon className="h-4 w-4" />
+      ) : displayStatus === "opened" ? (
+        <MailOpenIcon className="h-4 w-4" />
+      ) : displayStatus === "failed" ? (
         <XIcon className="h-4 w-4" />
+      ) : (
+        <ClockIcon className="h-4 w-4" />
       )}
     </div>
   );

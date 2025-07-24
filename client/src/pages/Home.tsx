@@ -3,6 +3,7 @@ import CredentialsForm from "@/components/CredentialsForm";
 import ExcelUpload from "@/components/ExcelUpload";
 import { TemplateEditor } from "@/components/TemplateEditor";
 import EmailSending from "@/components/EmailSending";
+import TrackingDashboard from "@/components/TrackingDashboard";
 import StepIndicator from "@/components/StepIndicator";
 import { MailIcon, Send } from "lucide-react";
 import { Link } from "wouter";
@@ -69,6 +70,7 @@ export default function Home() {
               />
             )}
             {currentStep === 4 && <EmailSending />}
+            {currentStep === 5 && <TrackingDashboard />}
           </div>
         </div>
       </main>

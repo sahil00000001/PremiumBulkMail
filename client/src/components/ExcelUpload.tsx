@@ -216,7 +216,7 @@ export default function ExcelUpload() {
                           </td>
                         ))}
                         <td className="px-4 py-3 whitespace-nowrap">
-                          <StatusBox status={recipient.status} />
+                          <StatusBox status={recipient.status} openedAt={recipient.openedAt} />
                         </td>
                       </tr>
                     );

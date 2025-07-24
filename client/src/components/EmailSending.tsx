@@ -213,6 +213,7 @@ export default function EmailSending() {
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Designation</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Company</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tracking</th>
               </tr>
             </thead>
             <tbody id="recipients-status" className="bg-white divide-y divide-gray-200">
@@ -227,7 +228,28 @@ export default function EmailSending() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{data.role || data.designation || data.Designation || '-'}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{data.Company || data.company || '-'}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <StatusBox status={recipient.status} />
+                      <div className="flex items-center space-x-2">
+                        <StatusBox status={recipient.status} openedAt={recipient.openedAt} />
+                        <span className="text-xs text-gray-500 capitalize">
+                          {recipient.status === "sent" && recipient.openedAt ? "opened" : recipient.status}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-500">
+                      {recipient.openedAt ? (
+                        <div className="flex flex-col">
+                          <span className="text-green-600 font-medium">✓ Opened</span>
+                          <span className="text-gray-400">
+                            {new Date(recipient.openedAt).toLocaleString()}
+                          </span>
+                        </div>
+                      ) : recipient.status === "sent" ? (
+                        <span className="text-blue-600">📧 Sent</span>
+                      ) : recipient.status === "failed" ? (
+                        <span className="text-red-600">✗ Failed</span>
+                      ) : (
+                        <span className="text-yellow-600">⏳ Pending</span>
+                      )}
                     </td>
                   </tr>
                 );
@@ -283,7 +305,14 @@ export default function EmailSending() {
               </div>
             </div>
             
-            <div className="flex justify-end mt-8">
+            <div className="flex justify-between items-center mt-8">
+              <Button 
+                type="button" 
+                onClick={() => setCurrentStep(5)}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                📊 View Tracking Dashboard
+              </Button>
               <Button 
                 type="button" 
                 variant="outline"
