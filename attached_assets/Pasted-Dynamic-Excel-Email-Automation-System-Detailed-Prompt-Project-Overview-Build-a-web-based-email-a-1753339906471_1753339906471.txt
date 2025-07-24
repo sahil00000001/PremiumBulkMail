@@ -1,0 +1,170 @@
+Dynamic Excel Email Automation System - Detailed Prompt
+Project Overview
+Build a web-based email automation tool that can process any Excel file format, dynamically extract all columns, create custom email templates using @ syntax for field insertion, and implement email tracking pixels for read receipts.
+Core Problem Statement
+Currently have a fixed-format email system that sends emails to Excel file contacts. Need to upgrade to a flexible system where users can upload ANY Excel file with ANY column structure, create custom email templates using those columns, and track email opens.
+Detailed Requirements
+1. Dynamic Excel File Processing
+
+File Upload: Accept any .xlsx, .xls file regardless of column names or structure
+Column Extraction: Automatically detect and extract ALL column names from uploaded file
+Data Processing: Parse all rows and make field values available for email templating
+Column Display: Show all detected columns as clickable tags/buttons
+Email Detection: Auto-identify which column contains email addresses
+Data Preview: Display sample data to user for verification
+
+Example Excel scenarios to handle:
+File 1: name, designation, contact_number, email
+Values: Sahil, Software Engineer, 1234, sahil@email.com
+
+File 2: full_name, job_title, phone, email_address, company
+Values: John Doe, Manager, 5678, john@company.com, TechCorp
+
+File 3: customer_name, position, mobile, email_id, department
+Values: Alice Smith, Developer, 9012, alice@dev.com, IT
+2. Custom Email Template System
+
+Body Editor: Large text area for writing custom email content
+@ Syntax Integration: Use @column_name to insert Excel field values
+Dynamic Field Insertion: Click column tags to auto-insert @field_name into email body
+Template Variables: Replace @field_name with actual values from Excel during sending
+Subject Line: Support @ variables in email subject as well
+Preview Function: Show how email will look with actual data substitution
+
+Template Example:
+Subject: Hello @name, Welcome to our service!
+
+Body:
+Dear @name,
+
+We are pleased to inform you about our new service.
+
+Your details:
+- Name: @name  
+- Designation: @designation
+- Contact: @contact_number
+- Email: @email
+
+Thank you for your interest.
+
+Best regards,
+Team
+3. Email Tracking Pixel Implementation
+
+Tracking Pixel: Add invisible 1x1 image to each email
+Unique IDs: Generate unique tracking ID for each sent email
+Server Integration: Set up tracking endpoint to log email opens
+Pixel URL Structure: https://yourtrackingdomain.com/track.php?email_id=unique123&recipient=user@email.com
+Status Tracking: Monitor sent/delivered/opened/failed status for each email
+Real-time Updates: Show email open status in dashboard
+
+Tracking Implementation:
+html<!-- Invisible tracking pixel added to each email -->
+<img src="https://yourtrackingdomain.com/track.php?email_id=unique123&recipient=user@email.com" 
+     width="1" height="1" style="display:none;">
+Server-side tracking:
+php// track.php - logs when email is opened
+<?php
+$email_id = $_GET['email_id'];
+$recipient = $_GET['recipient'];
+$timestamp = date('Y-m-d H:i:s');
+
+// Log email open event
+log_email_open($email_id, $recipient, $timestamp);
+
+// Return 1x1 transparent pixel
+header('Content-Type: image/gif');
+echo base64_decode('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7');
+?>
+4. User Interface Flow
+Step 1: File Upload
+
+Drag-drop or browse file selection
+Display "Upload your Excel file with any column structure"
+Show file processing status
+
+Step 2: Column Detection
+
+Display all detected columns as clickable tags
+Show sample data from first few rows
+Confirm email column identification
+
+Step 3: Template Creation
+
+Email subject input field (supports @ variables)
+Large text area for email body
+Column tags that insert @column_name when clicked
+Live preview of email with sample data
+
+Step 4: Email Sending
+
+Send button to process all emails
+Progress bar showing sending status
+Real-time count of sent/failed emails
+
+Step 5: Tracking Dashboard
+
+List of all sent emails with status
+Show sent/opened/failed for each recipient
+Overall statistics (open rate, delivery rate)
+
+5. Technical Implementation Details
+Excel Processing:
+javascript// Use SheetJS to read Excel files
+const workbook = XLSX.read(fileData);
+const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+// Extract column names
+const columns = Object.keys(jsonData[0]);
+
+// Process each row for email sending
+jsonData.forEach(row => {
+    // Replace @ variables in template with actual values
+    let emailBody = template.replace(/@(\w+)/g, (match, columnName) => {
+        return row[columnName] || '';
+    });
+});
+Email Generation with Tracking:
+javascriptfunction generateEmail(template, rowData, trackingId) {
+    // Replace @ variables with actual data
+    let subject = template.subject.replace(/@(\w+)/g, (match, col) => rowData[col] || '');
+    let body = template.body.replace(/@(\w+)/g, (match, col) => rowData[col] || '');
+    
+    // Add tracking pixel
+    const trackingPixel = `<img src="https://tracking.com/track.php?email_id=${trackingId}&recipient=${rowData.email}" width="1" height="1" style="display:none;">`;
+    body += trackingPixel;
+    
+    return { subject, body };
+}
+6. Example Usage Scenarios
+Scenario 1: HR Department
+Excel: employee_name, position, department, email, start_date
+Template: "Welcome @employee_name! You're joining @department as @position starting @start_date."
+Scenario 2: Sales Team
+Excel: client_name, company, email, deal_value, contact_person
+Template: "Hi @contact_person from @company, regarding your @deal_value project..."
+Scenario 3: Event Management
+Excel: attendee_name, company, email, ticket_type, event_date
+Template: "Dear @attendee_name, your @ticket_type ticket for @event_date is confirmed."
+7. Key Features Summary
+
+Flexible Excel Support: Handle any column structure, any field names
+Dynamic Template System: @ syntax for inserting any field from Excel
+Click-to-Insert: Column tags for easy template creation
+Email Tracking: Pixel-based tracking with 80-90% reliability
+Real-time Status: Live updates on email delivery and opens
+Batch Processing: Handle large email lists efficiently
+Error Handling: Manage failed sends and invalid data
+User-Friendly: No technical knowledge required
+
+8. Success Criteria
+
+Process any Excel file regardless of column names/structure
+Successfully replace @ variables with actual Excel data
+Track email opens with high reliability (80-90%)
+Handle 1000+ emails efficiently
+Provide clear status updates throughout process
+Maintain professional email formatting with tracking
+
+This system transforms a rigid, fixed-format email tool into a flexible, dynamic solution that adapts to any Excel file structure while providing professional email tracking capabilities.
