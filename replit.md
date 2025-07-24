@@ -26,6 +26,7 @@ A full-stack JavaScript application for bulk email marketing using Node.js, Expr
 - **2025-01-24**: Migrated project from Replit Agent to standard Replit environment
 - **2025-01-24**: Verified all dependencies are properly installed and working
 - **2025-01-24**: Confirmed server starts successfully on port 5000
+- **2025-01-24**: Fixed ExcelUpload component error by adding missing columns and emailColumn props from useEmail hook
 
 ## User Preferences
 - Standard full-stack JavaScript development patterns

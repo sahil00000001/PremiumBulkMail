@@ -6,7 +6,7 @@ import StatusBox from "@/components/StatusBox";
 import { useToast } from "@/hooks/use-toast";
 
 export default function ExcelUpload() {
-  const { recipients, setCurrentStep, isUploading, uploadExcel, downloadSample } = useEmail();
+  const { recipients, setCurrentStep, isUploading, uploadExcel, downloadSample, columns, emailColumn } = useEmail();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
