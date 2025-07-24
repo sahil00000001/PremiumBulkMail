@@ -134,7 +134,7 @@ export class MemStorage implements IStorage {
       console.log(`Updating tracking for ${trackingId}: ${email.email} opened at ${openedAt}`);
       email.openedAt = openedAt;
       this.emailsMap.set(email.id, email);
-      console.log(`Successfully updated tracking for ${email.email}`);
+      console.log(`Successfully updated tracking for ${email.email} - Batch: ${email.batchId}`);
     } else {
       console.log(`No email found with tracking ID: ${trackingId}`);
       console.log(`Available tracking IDs:`, Array.from(this.emailsMap.values()).map(e => e.trackingId));
