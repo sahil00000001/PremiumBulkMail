@@ -65,6 +65,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/pixel/analytics/:pixelId', emailController.getPixelAnalytics);
   app.get('/api/batch/tracking/:batchId', emailController.getBatchTrackingAnalytics);
   app.get('/api/dashboard/global', emailController.getGlobalDashboard);
+  
+  // Force refresh tracking data
+  app.post('/api/tracking/refresh/:batchId', emailController.forceRefreshTracking);
 
   // Template management
   app.post('/api/template/:batchId', saveTemplate);

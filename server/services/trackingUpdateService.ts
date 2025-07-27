@@ -54,11 +54,10 @@ export class TrackingUpdateService {
     try {
       const recipients = await storage.getRecipientsByBatchId(batchId);
       
-      // Only check emails that have tracking IDs and are not already marked as opened
+      // Check emails that have tracking IDs and are sent (including already opened ones for engagement updates)
       const trackableEmails = recipients.filter(r => 
         r.trackingId && 
-        r.status === 'sent' && 
-        !r.openedAt
+        r.status === 'sent'
       );
 
       if (trackableEmails.length === 0) {

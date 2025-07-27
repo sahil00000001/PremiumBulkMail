@@ -123,7 +123,10 @@ export class MemStorage implements IStorage {
         id,
         status: insertEmail.status || 'pending',
         trackingId: insertEmail.trackingId || null,
-        openedAt: insertEmail.openedAt || null
+        openedAt: insertEmail.openedAt || null,
+        lastSeenAt: insertEmail.lastSeenAt || null,
+        viewCount: insertEmail.viewCount || null,
+        totalViewTime: insertEmail.totalViewTime || null
       };
       this.emailsMap.set(id, email);
       savedEmails.push(email);
@@ -196,7 +199,14 @@ export class MemStorage implements IStorage {
   // Visitor tracking methods
   async createVisitorSession(insertVisitor: InsertVisitor): Promise<Visitor> {
     const id = this.currentVisitorId++;
-    const visitor: Visitor = { ...insertVisitor, id };
+    const visitor: Visitor = { 
+      ...insertVisitor, 
+      id,
+      ipAddress: insertVisitor.ipAddress || null,
+      userAgent: insertVisitor.userAgent || null,
+      timeSpentMs: insertVisitor.timeSpentMs || 0,
+      isActive: insertVisitor.isActive !== undefined ? insertVisitor.isActive : true
+    };
     this.visitorsMap.set(insertVisitor.sessionId, visitor);
     return visitor;
   }

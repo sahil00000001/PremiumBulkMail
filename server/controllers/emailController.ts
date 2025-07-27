@@ -5,6 +5,7 @@ import { storage } from '../storage';
 import { credentialsSchema, Recipient } from '@shared/schema';
 import { EmailTemplateProcessor } from '../utils/emailTemplate';
 import { pixelTrackingService } from '../services/pixelTrackingService';
+import { trackingUpdateService } from '../services/trackingUpdateService';
 import { v4 as uuidv4 } from 'uuid';
 
 // Store active email sending sessions
@@ -515,6 +516,35 @@ export const emailController = {
     } catch (error) {
       console.error('Error fetching global dashboard:', error);
       return res.status(500).json({ message: 'Failed to fetch dashboard statistics' });
+    }
+  },
+
+  // Force refresh tracking data for a batch
+  forceRefreshTracking: async (req: Request, res: Response) => {
+    try {
+      const { batchId } = req.params;
+      
+      if (!batchId) {
+        return res.status(400).json({ message: 'Batch ID is required' });
+      }
+      
+      console.log(`Force refreshing tracking data for batch: ${batchId}`);
+      
+      // Check if batch exists first
+      const batch = await storage.getBatch(batchId);
+      if (!batch) {
+        return res.status(404).json({ message: 'Batch not found' });
+      }
+      
+      await trackingUpdateService.updateBatchTrackingStatus(batchId);
+      
+      return res.status(200).json({ 
+        message: 'Tracking data refreshed successfully',
+        batchId 
+      });
+    } catch (error) {
+      console.error('Error force refreshing tracking data:', error);
+      return res.status(500).json({ message: 'Failed to refresh tracking data' });
     }
   }
 };
