@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { trackingUpdateService } from '../services/trackingUpdateService';
+import { storage } from '../storage';
 
 export const trackingController = {
   // Force update tracking for a specific email
@@ -34,6 +35,15 @@ export const trackingController = {
       
       if (!batchId) {
         return res.status(400).json({ message: 'Batch ID is required' });
+      }
+      
+      // Check if batch exists first
+      const batch = await storage.getBatch(batchId);
+      if (!batch) {
+        return res.status(200).json({
+          success: true,
+          message: 'Batch not found - tracking skipped'
+        });
       }
       
       await trackingUpdateService.updateBatchTrackingStatus(batchId);

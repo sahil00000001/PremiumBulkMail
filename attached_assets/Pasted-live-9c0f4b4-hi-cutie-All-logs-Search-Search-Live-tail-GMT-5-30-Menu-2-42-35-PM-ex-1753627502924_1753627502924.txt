@@ -1,0 +1,62 @@
+live
+9c0f4b4
+hi cutie
+
+All logs
+Search
+Search
+
+Live tail
+GMT+5:30
+
+Menu
+
+2:42:35 PM [express] GET /api/recipients/2dbcef0e-a04d-4d82-9159-8bddcde4d273 404 in 2ms :: {"messag…
+2:42:35 PM [express] POST /api/tracking/batch/2dbcef0e-a04d-4d82-9159-8bddcde4d273 200 in 1ms :: {"s…
+2:42:24 PM [express] GET /api/recipients/2dbcef0e-a04d-4d82-9159-8bddcde4d273 404 in 0ms :: {"messag…
+2:42:24 PM [express] POST /api/tracking/batch/2dbcef0e-a04d-4d82-9159-8bddcde4d273 200 in 0ms :: {"s…
+2:42:13 PM [express] GET /api/recipients/2dbcef0e-a04d-4d82-9159-8bddcde4d273 404 in 0ms :: {"messag…
+2:42:13 PM [express] POST /api/tracking/batch/2dbcef0e-a04d-4d82-9159-8bddcde4d273 200 in 0ms :: {"s…
+2:42:02 PM [express] GET /api/recipients/2dbcef0e-a04d-4d82-9159-8bddcde4d273 404 in 1ms :: {"messag…
+2:42:02 PM [express] POST /api/tracking/batch/2dbcef0e-a04d-4d82-9159-8bddcde4d273 200 in 1ms :: {"s…
+2:41:51 PM [express] GET /api/recipients/2dbcef0e-a04d-4d82-9159-8bddcde4d273 404 in 0ms :: {"messag…
+2:41:51 PM [express] POST /api/tracking/batch/2dbcef0e-a04d-4d82-9159-8bddcde4d273 200 in 1ms :: {"s…
+2:41:48 PM [express] POST /api/visitors/activity 200 in 1ms :: {"success":true,"message":"Activity u…
+Session not found: 3e765b59-79d3-44ae-80c8-991d8bc6d7b6
+2:41:40 PM [express] GET /api/recipients/2dbcef0e-a04d-4d82-9159-8bddcde4d273 404 in 0ms :: {"messag…
+2:41:40 PM [express] POST /api/tracking/batch/2dbcef0e-a04d-4d82-9159-8bddcde4d273 200 in 1ms :: {"s…
+2:41:29 PM [express] GET /api/recipients/2dbcef0e-a04d-4d82-9159-8bddcde4d273 404 in 1ms :: {"messag…
+2:41:29 PM [express] POST /api/tracking/batch/2dbcef0e-a04d-4d82-9159-8bddcde4d273 200 in 0ms :: {"s…
+2:41:18 PM [express] GET /api/recipients/2dbcef0e-a04d-4d82-9159-8bddcde4d273 404 in 0ms :: {"messag…
+2:41:18 PM [express] POST /api/tracking/batch/2dbcef0e-a04d-4d82-9159-8bddcde4d273 200 in 0ms :: {"s…
+2:41:07 PM [express] GET /api/recipients/2dbcef0e-a04d-4d82-9159-8bddcde4d273 404 in 1ms :: {"messag…
+2:41:07 PM [express] POST /api/tracking/batch/2dbcef0e-a04d-4d82-9159-8bddcde4d273 200 in 1ms :: {"s…
+2:40:56 PM [express] GET /api/recipients/2dbcef0e-a04d-4d82-9159-8bddcde4d273 404 in 0ms :: {"messag…
+2:40:56 PM [express] POST /api/tracking/batch/2dbcef0e-a04d-4d82-9159-8bddcde4d273 200 in 0ms :: {"s…
+2:40:48 PM [express] POST /api/visitors/activity 200 in 0ms :: {"success":true,"message":"Activity u…
+Session not found: 3e765b59-79d3-44ae-80c8-991d8bc6d7b6
+2:40:45 PM [express] GET /api/recipients/2dbcef0e-a04d-4d82-9159-8bddcde4d273 404 in 1ms :: {"messag…
+2:40:45 PM [express] POST /api/tracking/batch/2dbcef0e-a04d-4d82-9159-8bddcde4d273 200 in 1ms :: {"s…
+2:40:34 PM [express] GET /api/recipients/2dbcef0e-a04d-4d82-9159-8bddcde4d273 404 in 1ms :: {"messag…
+2:40:34 PM [express] POST /api/tracking/batch/2dbcef0e-a04d-4d82-9159-8bddcde4d273 200 in 1ms :: {"s…
+2:40:23 PM [express] GET /api/recipients/2dbcef0e-a04d-4d82-9159-8bddcde4d273 404 in 0ms :: {"messag…
+2:40:23 PM [express] POST /api/tracking/batch/2dbcef0e-a04d-4d82-9159-8bddcde4d273 200 in 1ms :: {"s…
+2:40:12 PM [express] GET /api/recipients/2dbcef0e-a04d-4d82-9159-8bddcde4d273 404 in 1ms :: {"messag…
+2:40:12 PM [express] POST /api/tracking/batch/2dbcef0e-a04d-4d82-9159-8bddcde4d273 200 in 1ms :: {"s…
+2:40:01 PM [express] GET /api/recipients/2dbcef0e-a04d-4d82-9159-8bddcde4d273 404 in 1ms :: {"messag…
+2:40:01 PM [express] POST /api/tracking/batch/2dbcef0e-a04d-4d82-9159-8bddcde4d273 200 in 1ms :: {"s…
+2:39:50 PM [express] GET /api/recipients/2dbcef0e-a04d-4d82-9159-8bddcde4d273 404 in 1ms :: {"messag…
+2:39:50 PM [express] POST /api/tracking/batch/2dbcef0e-a04d-4d82-9159-8bddcde4d273 200 in 2ms :: {"s…
+2:39:48 PM [express] POST /api/visitors/activity 200 in 1ms :: {"success":true,"message":"Activity u…
+Session not found: 3e765b59-79d3-44ae-80c8-991d8bc6d7b6
+WebSocket client connected
+2:39:39 PM [express] GET /api/recipients/2dbcef0e-a04d-4d82-9159-8bddcde4d273 404 in 1ms :: {"messag…
+2:39:39 PM [express] POST /api/tracking/batch/2dbcef0e-a04d-4d82-9159-8bddcde4d273 200 in 3ms :: {"s…
+==> ///////////////////////////////////////////////////////////
+==> 
+==> Available at your primary URL https://premiumbulkmail-8z31.onrender.com
+==> 
+==> ///////////////////////////////////////////////////////////
+==> 
+==> Your service is live 🎉
+2:39:26 PM [express] Server running on http://0.0.0.0:10000

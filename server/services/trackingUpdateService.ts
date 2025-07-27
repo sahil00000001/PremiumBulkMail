@@ -54,6 +54,11 @@ export class TrackingUpdateService {
     try {
       const recipients = await storage.getRecipientsByBatchId(batchId);
       
+      // If no recipients found for this batch, skip silently (batch might not exist)
+      if (recipients.length === 0) {
+        return;
+      }
+      
       // Check emails that have tracking IDs and are sent (including already opened ones for engagement updates)
       const trackableEmails = recipients.filter(r => 
         r.trackingId && 
