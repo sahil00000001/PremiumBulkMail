@@ -4,6 +4,7 @@ import { getEmailTemplate } from '../template/emailTemplate';
 import { storage } from '../storage';
 import { credentialsSchema, Recipient } from '@shared/schema';
 import { EmailTemplateProcessor } from '../utils/emailTemplate';
+import { pixelTrackingService } from '../services/pixelTrackingService';
 import { v4 as uuidv4 } from 'uuid';
 
 // Store active email sending sessions
@@ -422,6 +423,98 @@ export const emailController = {
     } catch (error) {
       console.error('Error fetching template:', error);
       return res.status(500).json({ message: 'Failed to fetch template' });
+    }
+  },
+
+  // Get pixel tracking analytics for a specific email
+  getPixelAnalytics: async (req: Request, res: Response) => {
+    try {
+      const { pixelId } = req.params;
+      
+      if (!pixelId) {
+        return res.status(400).json({ message: 'Pixel ID is required' });
+      }
+      
+      console.log(`Fetching analytics for pixel ID: ${pixelId}`);
+      const analytics = await pixelTrackingService.checkPixelStatus(pixelId);
+      
+      return res.status(200).json(analytics);
+    } catch (error) {
+      console.error('Error fetching pixel analytics:', error);
+      return res.status(500).json({ message: 'Failed to fetch pixel analytics' });
+    }
+  },
+
+  // Get tracking analytics for a batch
+  getBatchTrackingAnalytics: async (req: Request, res: Response) => {
+    try {
+      const { batchId } = req.params;
+      
+      if (!batchId) {
+        return res.status(400).json({ message: 'Batch ID is required' });
+      }
+      
+      const recipients = await storage.getRecipientsByBatchId(batchId);
+      
+      // Get analytics for each recipient with tracking ID
+      const analyticsPromises = recipients
+        .filter(r => r.trackingId)
+        .map(async (recipient) => {
+          try {
+            const analytics = await pixelTrackingService.checkPixelStatus(recipient.trackingId!);
+            return {
+              email: recipient.email,
+              trackingId: recipient.trackingId,
+              ...analytics
+            };
+          } catch (error) {
+            console.error(`Failed to get analytics for ${recipient.email}:`, error);
+            return {
+              email: recipient.email,
+              trackingId: recipient.trackingId,
+              opened: false,
+              viewCount: 0,
+              totalViewTime: 0,
+              message: 'Failed to retrieve analytics'
+            };
+          }
+        });
+      
+      const trackingData = await Promise.all(analyticsPromises);
+      
+      // Calculate batch statistics
+      const totalTracked = trackingData.length;
+      const totalOpened = trackingData.filter(t => t.opened).length;
+      const openRate = totalTracked > 0 ? (totalOpened / totalTracked) * 100 : 0;
+      const averageViewTime = totalTracked > 0 
+        ? trackingData.reduce((sum, t) => sum + (t.totalViewTime || 0), 0) / totalTracked 
+        : 0;
+      
+      return res.status(200).json({
+        batchId,
+        totalEmails: recipients.length,
+        totalTracked,
+        totalOpened,
+        openRate: Math.round(openRate * 100) / 100,
+        averageViewTime: Math.round(averageViewTime),
+        recipients: trackingData
+      });
+    } catch (error) {
+      console.error('Error fetching batch tracking analytics:', error);
+      return res.status(500).json({ message: 'Failed to fetch batch tracking analytics' });
+    }
+  },
+
+  // Get global dashboard statistics
+  getGlobalDashboard: async (req: Request, res: Response) => {
+    try {
+      console.log('Fetching global dashboard statistics...');
+      const dashboardStats = await pixelTrackingService.getDashboardStats();
+      
+      return res.status(200).json(dashboardStats);
+    } catch (error) {
+      console.error('Error fetching global dashboard:', error);
+      return res.status(500).json({ message: 'Failed to fetch dashboard statistics' });
     }
   }
 };

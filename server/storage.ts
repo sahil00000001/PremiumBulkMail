@@ -1,12 +1,15 @@
 import { 
   emails, 
   batches, 
+  websiteVisitors,
   type User, 
   type InsertUser, 
   type Email, 
   type InsertEmail, 
   type Batch,
-  type InsertBatch 
+  type InsertBatch,
+  type Visitor,
+  type InsertVisitor
 } from "@shared/schema";
 
 export interface IStorage {
@@ -25,27 +28,42 @@ export interface IStorage {
   updateRecipientStatus(id: number, status: string): Promise<void>;
   updateRecipientTracking(trackingId: string, openedAt: string): Promise<void>;
   updateRecipientTrackingId(id: number, trackingId: string): Promise<void>;
+  updateRecipientEngagement(trackingId: string, openedAt: string, viewCount: number, totalViewTime: number, lastSeenAt?: string): Promise<void>;
   getRecipientByTrackingId(trackingId: string): Promise<Email | undefined>;
   
   // Template related methods
   updateBatchTemplate(batchId: string, template: string, subject: string): Promise<void>;
+  
+  // Visitor tracking methods
+  createVisitorSession(visitor: InsertVisitor): Promise<Visitor>;
+  updateVisitorActivity(sessionId: string, lastSeenAt: string, timeSpentMs: number): Promise<void>;
+  endVisitorSession(sessionId: string, lastSeenAt: string, timeSpentMs: number): Promise<void>;
+  getAllVisitors(): Promise<Visitor[]>;
+  getActiveVisitors(): Promise<Visitor[]>;
+  
+  // Batch management methods
+  getAllBatches?(): Promise<Batch[]>;
 }
 
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
   private emailsMap: Map<number, Email>;
   private batchesMap: Map<string, Batch>;
+  private visitorsMap: Map<string, Visitor>;
   currentUserId: number;
   currentEmailId: number;
   currentBatchId: number;
+  currentVisitorId: number;
 
   constructor() {
     this.users = new Map();
     this.emailsMap = new Map();
     this.batchesMap = new Map();
+    this.visitorsMap = new Map();
     this.currentUserId = 1;
     this.currentEmailId = 1;
     this.currentBatchId = 1;
+    this.currentVisitorId = 1;
   }
 
   async getUser(id: number): Promise<User | undefined> {
@@ -153,6 +171,19 @@ export class MemStorage implements IStorage {
     }
   }
 
+  async updateRecipientEngagement(trackingId: string, openedAt: string, viewCount: number, totalViewTime: number, lastSeenAt?: string): Promise<void> {
+    const email = Array.from(this.emailsMap.values()).find(e => e.trackingId === trackingId);
+    if (email) {
+      email.openedAt = openedAt;
+      email.viewCount = viewCount;
+      email.totalViewTime = totalViewTime;
+      if (lastSeenAt) {
+        email.lastSeenAt = lastSeenAt;
+      }
+      this.emailsMap.set(email.id!, email);
+    }
+  }
+
   async updateBatchTemplate(batchId: string, template: string, subject: string): Promise<void> {
     const batch = this.batchesMap.get(batchId);
     if (batch) {
@@ -160,6 +191,46 @@ export class MemStorage implements IStorage {
       batch.subject = subject;
       this.batchesMap.set(batchId, batch);
     }
+  }
+
+  // Visitor tracking methods
+  async createVisitorSession(insertVisitor: InsertVisitor): Promise<Visitor> {
+    const id = this.currentVisitorId++;
+    const visitor: Visitor = { ...insertVisitor, id };
+    this.visitorsMap.set(insertVisitor.sessionId, visitor);
+    return visitor;
+  }
+
+  async updateVisitorActivity(sessionId: string, lastSeenAt: string, timeSpentMs: number): Promise<void> {
+    const visitor = this.visitorsMap.get(sessionId);
+    if (visitor) {
+      visitor.lastSeenAt = lastSeenAt;
+      visitor.timeSpentMs = timeSpentMs;
+      this.visitorsMap.set(sessionId, visitor);
+    }
+  }
+
+  async endVisitorSession(sessionId: string, lastSeenAt: string, timeSpentMs: number): Promise<void> {
+    const visitor = this.visitorsMap.get(sessionId);
+    if (visitor) {
+      visitor.lastSeenAt = lastSeenAt;
+      visitor.timeSpentMs = timeSpentMs;
+      visitor.isActive = false;
+      this.visitorsMap.set(sessionId, visitor);
+    }
+  }
+
+  async getAllVisitors(): Promise<Visitor[]> {
+    return Array.from(this.visitorsMap.values());
+  }
+
+  async getActiveVisitors(): Promise<Visitor[]> {
+    return Array.from(this.visitorsMap.values()).filter(v => v.isActive);
+  }
+
+  // Get all batches for tracking updates
+  async getAllBatches(): Promise<Batch[]> {
+    return Array.from(this.batchesMap.values());
   }
 }
 

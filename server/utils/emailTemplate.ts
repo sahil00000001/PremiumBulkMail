@@ -1,21 +1,11 @@
-import { v4 as uuidv4 } from 'uuid';
+import { pixelTrackingService } from '../services/pixelTrackingService';
 
 export class EmailTemplateProcessor {
-  static processTemplate(
+  static async processTemplate(
     template: string,
     subject: string,
     recipientData: Record<string, any>
-  ): { subject: string; body: string; trackingId: string } {
-    // Generate unique tracking ID for this email
-    const trackingId = uuidv4();
-    
-    // IMPORTANT: This is your ngrok URL - update this when ngrok gives you a new URL
-    const baseUrl = 'https://9357cac0e613.ngrok-free.app';
-    
-    // Log for debugging
-    console.log(`Using base URL for tracking: ${baseUrl}`);
-    console.log(`Generated tracking ID: ${trackingId}`);
-    
+  ): Promise<{ subject: string; body: string; trackingId: string }> {
     // Process template variables - replace @variable with actual data
     let processedBody = template;
     let processedSubject = subject;
@@ -27,27 +17,54 @@ export class EmailTemplateProcessor {
       processedSubject = processedSubject.replace(regex, recipientData[key] || '');
     });
     
-    // Add tracking pixel at the end of the email
-    const trackingPixel = `<img src="${baseUrl}/api/track/${trackingId}?ngrok-skip-browser-warning=true" width="1" height="1" style="display:none;opacity:0;visibility:hidden;" alt="" border="0">`;
-    // Wrap in proper HTML structure
-    const htmlBody = `<html>
+    try {
+      // Create unique pixel for this email using external API
+      console.log('Creating tracking pixel via external API...');
+      const pixelData = await pixelTrackingService.createPixel();
+      
+      console.log(`Pixel created successfully: ID=${pixelData.id}`);
+      
+      // Wrap in proper HTML structure
+      let htmlBody = `<html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
   ${processedBody}
-  ${trackingPixel}
 </body>
 </html>`;
-    
-    console.log(`Email prepared with tracking ID: ${trackingId}`);
-    console.log(`Tracking pixel URL: ${baseUrl}/api/track/${trackingId}`);
-    
-    return {
-      subject: processedSubject,
-      body: htmlBody,
-      trackingId
-    };
+      
+      // Embed the tracking pixel using the service
+      htmlBody = pixelTrackingService.embedPixelInEmail(htmlBody, pixelData.embedCode);
+      
+      console.log(`Email prepared with external tracking pixel ID: ${pixelData.id}`);
+      
+      return {
+        subject: processedSubject,
+        body: htmlBody,
+        trackingId: pixelData.id // Use the pixel ID as tracking ID
+      };
+    } catch (error) {
+      console.error('Failed to create tracking pixel via external API:', error);
+      
+      // Fallback: create email without tracking
+      console.log('Proceeding without tracking pixel...');
+      const htmlBody = `<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+  ${processedBody}
+</body>
+</html>`;
+      
+      return {
+        subject: processedSubject,
+        body: htmlBody,
+        trackingId: '' // No tracking if pixel creation fails
+      };
+    }
   }
 }

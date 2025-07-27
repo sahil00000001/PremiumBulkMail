@@ -1,10 +1,15 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import { WebSocketServer } from "ws";
 import { storage } from "./storage";
 import multer from "multer";
+import { visitorTrackingService } from "./services/visitorTrackingService";
 import { uploadController } from "./controllers/uploadController";
 import { emailController } from "./controllers/emailController";
+import { visitorController } from "./controllers/visitorController";
+import { trackingController } from "./controllers/trackingController";
 import { saveTemplate, getTemplate } from "./routes/templateRoutes";
+import { trackingUpdateService } from "./services/trackingUpdateService";
 
 // Setup multer for memory storage (for Excel parsing)
 const upload = multer({ 
@@ -53,14 +58,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get batch summary
   app.get('/api/summary/:batchId', emailController.getBatchSummary);
 
-  // Email tracking pixel endpoint
+  // Email tracking pixel endpoint (legacy for existing emails)
   app.get('/api/track/:trackingId', emailController.trackEmailOpen);
+
+  // New pixel tracking analytics endpoints
+  app.get('/api/pixel/analytics/:pixelId', emailController.getPixelAnalytics);
+  app.get('/api/batch/tracking/:batchId', emailController.getBatchTrackingAnalytics);
+  app.get('/api/dashboard/global', emailController.getGlobalDashboard);
 
   // Template management
   app.post('/api/template/:batchId', saveTemplate);
   app.get('/api/template/:batchId', getTemplate);
 
+  // Visitor tracking endpoints
+  app.post('/api/visitors/start', visitorController.startSession);
+  app.post('/api/visitors/activity', visitorController.updateActivity);
+  app.post('/api/visitors/end', visitorController.endSession);
+  app.get('/api/visitors/stats', visitorController.getStats);
+  app.get('/api/visitors/active', visitorController.getActiveSessions);
+
+  // Manual tracking update endpoints
+  app.post('/api/tracking/update/:trackingId', trackingController.updateSingleTracking);
+  app.post('/api/tracking/batch/:batchId', trackingController.updateBatchTracking);
+  app.get('/api/tracking/summary', trackingController.getTrackingSummary);
+
   const httpServer = createServer(app);
+
+  // WebSocket server for real-time visitor updates
+  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
+  
+  wss.on('connection', (ws) => {
+    console.log('WebSocket client connected');
+    
+    // Send initial visitor stats
+    visitorTrackingService.getVisitorStats().then(stats => {
+      ws.send(JSON.stringify({
+        type: 'visitor_stats',
+        data: stats
+      }));
+    });
+    
+    ws.on('close', () => {
+      console.log('WebSocket client disconnected');
+    });
+  });
+
+  // Broadcast visitor stats every 5 seconds
+  setInterval(async () => {
+    if (wss.clients.size > 0) {
+      try {
+        const stats = await visitorTrackingService.getVisitorStats();
+        const message = JSON.stringify({
+          type: 'visitor_stats',
+          data: stats
+        });
+        
+        wss.clients.forEach((client) => {
+          if (client.readyState === 1) { // WebSocket.OPEN
+            client.send(message);
+          }
+        });
+      } catch (error) {
+        console.error('Error broadcasting visitor stats:', error);
+      }
+    }
+  }, 5000);
 
   return httpServer;
 }

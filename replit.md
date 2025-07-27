@@ -11,6 +11,8 @@ A full-stack JavaScript application for bulk email marketing using Node.js, Expr
 - **File Processing**: Excel file upload and processing with ExcelJS
 - **Authentication**: Passport.js with local strategy
 - **Session Management**: Express sessions with connect-pg-simple
+- **Pixel Tracking**: External API integration (https://pixel-tracker-dc1i.onrender.com)
+- **Analytics**: Comprehensive email open tracking with view counts and timing
 
 ## Technical Stack
 - **Runtime**: Node.js 20 with TypeScript
@@ -23,18 +25,26 @@ A full-stack JavaScript application for bulk email marketing using Node.js, Expr
 - **Routing**: Wouter for client-side routing
 
 ## Recent Changes
-- **2025-01-24**: Migrated project from Replit Agent to standard Replit environment
-- **2025-01-24**: Verified all dependencies are properly installed and working
-- **2025-01-24**: Confirmed server starts successfully on port 5000
-- **2025-01-24**: Fixed ExcelUpload component error by adding missing columns and emailColumn props from useEmail hook
-- **2025-01-24**: Enhanced email tracking system with pixel tracking and dashboard
-- **2025-01-24**: Added comprehensive tracking dashboard showing open rates and detailed analytics
-- **2025-01-24**: Updated StatusBox component to show different states (pending, sent, opened, failed)
-- **2025-01-24**: Added new step 5 for tracking dashboard with real-time updates
-- **2025-01-24**: Fixed email tracking pixel implementation to ensure HTML emails with proper invisible tracking
-- **2025-01-24**: Enhanced tracking pixel with better Gmail compatibility and automatic HTML formatting
-- **2025-01-24**: Removed test buttons per user feedback - tracking now works automatically when emails are opened
-- **2025-01-24**: FIXED tracking issue - debugging showed storage updates weren't working, now confirmed tracking pixels work properly
+- **2025-07-27**: Successfully migrated project from Replit Agent to standard Replit environment
+- **2025-07-27**: Fixed npm dependency conflicts using .npmrc with legacy-peer-deps=true
+- **2025-07-27**: Verified all packages install correctly and server runs on port 5000
+- **2025-07-27**: **MAJOR**: Integrated external Pixel Tracking API (https://pixel-tracker-dc1i.onrender.com)
+- **2025-07-27**: Replaced local tracking with external API for better Gmail compatibility and analytics
+- **2025-07-27**: Added new PixelTrackingService with centralized API configuration
+- **2025-07-27**: Updated EmailTemplateProcessor to use external pixel creation API
+- **2025-07-27**: Added new API endpoints for pixel analytics and batch tracking statistics
+- **2025-07-27**: Implemented fallback handling for pixel creation failures
+- **2025-07-27**: Added environment configuration for PIXEL_TRACKER_BASE_URL
+- **2025-07-27**: Created comprehensive tracking analytics with open rates, view counts, and timing data
+- **2025-07-27**: Added beautiful visitor counter with real-time WebSocket updates in footer
+- **2025-07-27**: Implemented session tracking, time analytics, and live visitor statistics
+- **2025-07-27**: **MAJOR**: Integrated email engagement time tracking for lead scoring
+- **2025-07-27**: Added totalViewTime, viewCount, and lastSeenAt fields to email schema
+- **2025-07-27**: Created EngagementAnalytics component with sorting/filtering by reading time
+- **2025-07-27**: Enhanced tracking service to capture engagement metrics from external API
+- **2025-07-27**: Implemented lead scoring based on reading time (30s+ = high interest)
+- **2025-07-27**: Added tabbed dashboard with Overview and Engagement Analytics views
+- **2025-07-27**: Created time formatting utilities to display engagement time in mm:ss format
 
 ## User Preferences
 - Standard full-stack JavaScript development patterns

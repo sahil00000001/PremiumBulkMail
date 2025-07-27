@@ -16,6 +16,9 @@ export const emails = pgTable("emails", {
   batchId: text("batch_id").notNull(),
   trackingId: text("tracking_id"), // For email tracking
   openedAt: text("opened_at"), // When email was opened
+  lastSeenAt: text("last_seen_at"), // Last time email was viewed
+  viewCount: integer("view_count").default(0), // Number of times viewed
+  totalViewTime: integer("total_view_time").default(0), // Total engagement time in milliseconds
 });
 
 export const batches = pgTable("batches", {
@@ -33,6 +36,17 @@ export const batches = pgTable("batches", {
   subject: text("subject"), // Email subject with @ variables
 });
 
+export const websiteVisitors = pgTable("website_visitors", {
+  id: serial("id").primaryKey(),
+  sessionId: text("session_id").notNull().unique(),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  visitedAt: text("visited_at").notNull(),
+  lastSeenAt: text("last_seen_at").notNull(),
+  timeSpentMs: integer("time_spent_ms").notNull().default(0),
+  isActive: boolean("is_active").notNull().default(true),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -45,6 +59,9 @@ export const insertEmailSchema = createInsertSchema(emails).pick({
   batchId: true,
   trackingId: true,
   openedAt: true,
+  lastSeenAt: true,
+  viewCount: true,
+  totalViewTime: true,
 });
 
 export const insertBatchSchema = createInsertSchema(batches).pick({
@@ -59,6 +76,16 @@ export const insertBatchSchema = createInsertSchema(batches).pick({
   emailColumn: true,
   template: true,
   subject: true,
+});
+
+export const insertVisitorSchema = createInsertSchema(websiteVisitors).pick({
+  sessionId: true,
+  ipAddress: true,
+  userAgent: true,
+  visitedAt: true,
+  lastSeenAt: true,
+  timeSpentMs: true,
+  isActive: true,
 });
 
 export const credentialsSchema = z.object({
@@ -78,6 +105,9 @@ export type Email = typeof emails.$inferSelect;
 
 export type InsertBatch = z.infer<typeof insertBatchSchema>;
 export type Batch = typeof batches.$inferSelect;
+
+export type InsertVisitor = z.infer<typeof insertVisitorSchema>;
+export type Visitor = typeof websiteVisitors.$inferSelect;
 
 export type Credentials = z.infer<typeof credentialsSchema>;
 

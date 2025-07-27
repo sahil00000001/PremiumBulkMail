@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import StatusBox from "@/components/StatusBox";
-import { MailIcon, MailOpenIcon, AlertCircleIcon, ClockIcon, RefreshCwIcon } from "lucide-react";
+import { MailIcon, MailOpenIcon, AlertCircleIcon, ClockIcon, RefreshCwIcon, BarChart3 } from "lucide-react";
 import { useEmail } from "@/hooks/use-email";
+import { EngagementAnalytics } from "./EngagementAnalytics";
 
 interface TrackingStats {
   total: number;
@@ -43,6 +45,19 @@ export default function TrackingDashboard() {
     
     setRefreshing(true);
     try {
+      // First, trigger tracking status update from external API
+      console.log('Refreshing tracking status from external API...');
+      const trackingResponse = await fetch(`/api/tracking/batch/${batchId}`, {
+        method: 'POST',
+      });
+      
+      if (trackingResponse.ok) {
+        console.log('Tracking status updated from external API');
+      } else {
+        console.warn('Failed to update tracking status from external API');
+      }
+      
+      // Then refresh the local data
       await contextRefresh();
       setLastUpdated(new Date());
     } catch (error) {
@@ -80,6 +95,21 @@ export default function TrackingDashboard() {
           Refresh
         </Button>
       </div>
+
+      {/* Tabs for different views */}
+      <Tabs defaultValue="overview" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="overview" className="flex items-center gap-2">
+            <MailIcon className="h-4 w-4" />
+            Overview
+          </TabsTrigger>
+          <TabsTrigger value="analytics" className="flex items-center gap-2">
+            <BarChart3 className="h-4 w-4" />
+            Engagement Analytics
+          </TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="overview" className="space-y-6">
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -243,18 +273,24 @@ export default function TrackingDashboard() {
         </CardContent>
       </Card>
 
-      {/* Tracking Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle>How Email Tracking Works</CardTitle>
-        </CardHeader>
-        <CardContent className="text-sm text-gray-600 space-y-2">
-          <p>• Each email contains an invisible 1x1 pixel image unique to the recipient</p>
-          <p>• When the recipient opens the email, the pixel loads and registers as "opened"</p>
-          <p>• Tracking works best with HTML emails and may not work if images are blocked</p>
-          <p>• The dashboard refreshes automatically every 10 seconds to show new opens</p>
-        </CardContent>
-      </Card>
+          {/* Tracking Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle>How Email Tracking Works</CardTitle>
+            </CardHeader>
+            <CardContent className="text-sm text-gray-600 space-y-2">
+              <p>• Each email contains an invisible 1x1 pixel image unique to the recipient</p>
+              <p>• When the recipient opens the email, the pixel loads and registers as "opened"</p>
+              <p>• Tracking works best with HTML emails and may not work if images are blocked</p>
+              <p>• The dashboard refreshes automatically every 10 seconds to show new opens</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="analytics">
+          <EngagementAnalytics />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

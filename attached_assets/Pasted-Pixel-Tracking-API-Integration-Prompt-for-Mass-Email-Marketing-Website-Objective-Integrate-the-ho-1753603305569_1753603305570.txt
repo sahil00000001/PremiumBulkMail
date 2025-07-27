@@ -1,0 +1,146 @@
+Pixel Tracking API Integration Prompt for Mass Email Marketing Website
+Objective:
+Integrate the hosted Pixel Tracking API into your existing mass email marketing platform to provide unique tracking pixels per email, track opens, view counts, and viewing duration, and display accurate analytics—all without changing your current email sending logic.
+
+Key Requirements
+Do not hard-code the pixel tracker base URL anywhere except in one central configuration file or environment variable.
+
+Use only the API paths in your calls and concatenate with the configurable base URL dynamically.
+
+Remove any existing manual pixel-generation or embedding logic.
+
+For each email sent, generate a unique pixel by calling the backend API before sending the email.
+
+Embed the returned pixel embed code directly into the email HTML before sending.
+
+Track and update email open status and analytics by querying the API with the stored pixel ID.
+
+No changes needed to SMTP or the mass email sending mechanism itself.
+
+Integration Steps
+Centralize Pixel Tracker Base URL
+
+Define your pixel tracking base URL in a single place, such as:
+
+An environment variable PIXEL_TRACKER_BASE_URL, or
+
+A configuration file/module like config.js, config.py, etc.
+
+Example:
+
+js
+const PIXEL_TRACKER_BASE_URL = process.env.PIXEL_TRACKER_BASE_URL || "https://pixel-tracker-dc1i.onrender.com";
+Create a Unique Tracking Pixel for Each Email
+
+Before sending the email to each recipient:
+
+Call the Create Pixel API:
+GET ${PIXEL_TRACKER_BASE_URL}/api/pixel/create
+
+Extract the response JSON fields:
+
+id (Pixel ID) — store this with the recipient and email record.
+
+embedCode — the HTML snippet to embed in the email content.
+
+Embed the Tracking Pixel
+
+Inject the embedCode HTML snippet into the email body (typically before the closing </body> tag).
+
+Ensure each recipient’s email has a unique pixel from the API — DO NOT reuse the same pixel for multiple recipients.
+
+Send Emails As Usual
+
+No modifications needed to your existing Gmail SMTP sending process or mass email workflow.
+
+Just ensure the pixel embed code is part of the email HTML sent.
+
+Retrieve Open & Engagement Analytics
+
+To check an email’s open status and engagement metrics:
+
+Call the Check Pixel Status API:
+POST ${PIXEL_TRACKER_BASE_URL}/api/pixel/check
+Headers: Content-Type: application/json
+Body:
+
+json
+{
+  "id": "<pixel-id-associated-with-this-email>"
+}
+Response includes:
+
+opened (boolean)
+
+openedAt, lastSeenAt (timestamps)
+
+viewCount (number of times email opened)
+
+totalViewTime (milliseconds viewed)
+
+Use this data to update your dashboards, user profiles, or analytics sections.
+
+Optional: Retrieve Dashboard Stats
+
+For aggregate insights across all pixels/emails, call:
+GET ${PIXEL_TRACKER_BASE_URL}/api/dashboard
+
+Use stats for metrics like total pixels created, open rates, average view time, recent activities.
+
+Edge Case Handling & Best Practices
+Always generate and embed a new pixel per email/recipient. Do not reuse pixels for different emails.
+
+Store each pixel’s unique id alongside recipient data to query status later.
+
+Do not cache pixel analytics responses for long; fetch fresh data each time you update UI.
+
+If the Check call returns "opened": false with "message": "Pixel not found", treat as “Not opened” or invalid pixel.
+
+Respect API rate limits and error codes; handle failures gracefully without breaking your mass email flow.
+
+Never mix pixel functionality with your SMTP or mass email sending mechanisms—keep it a separate API integration.
+
+Keep the pixel tracker base URL configurable, so if you move servers or domains, update just one place.
+
+Example Pseudo-Code Workflow
+text
+# Load PIXEL_TRACKER_BASE_URL from config or environment
+
+for each recipient in email_list:
+    # 1. Create pixel for this email/recipient
+    response = GET {PIXEL_TRACKER_BASE_URL}/api/pixel/create
+    pixel_id = response.id
+    embed_code = response.embedCode
+
+    # 2. Save pixel_id linked to recipient/email in DB
+
+    # 3. Generate email HTML
+    email_html = generate_email_content(recipient)
+
+    # 4. Inject pixel embed code before </body>
+    email_html = email_html.replace("</body>", embed_code + "</body>")
+
+    # 5. Send email with existing SMTP logic
+    send_email(recipient.email, email_html)
+To check open status and analytics later:
+
+text
+for each sent email:
+    pixel_id = lookup_pixel_id_in_db(email_record)
+    analytics = POST {PIXEL_TRACKER_BASE_URL}/api/pixel/check 
+                 with JSON {"id": pixel_id}
+    update_dashboard_or_user_profile(analytics)
+Summary Checklist
+ Maintain pixel tracker base URL only in config/env variables.
+
+ Generate one pixel per email via GET /api/pixel/create.
+
+ Inject pixel embed code from API into outgoing email HTML.
+
+ Send emails without changing SMTP/mailer logic.
+
+ Query pixel status via POST /api/pixel/check to fetch open/view analytics.
+
+ Handle errors gracefully and never reuse pixel IDs.
+
+ Optionally, get global stats from GET /api/dashboard

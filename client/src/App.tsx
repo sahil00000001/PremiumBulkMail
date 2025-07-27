@@ -7,6 +7,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import Landing from "@/pages/Landing";
 import { EmailProvider } from "@/hooks/use-email";
+import { Footer } from "@/components/Footer";
 
 function Router() {
   const [location] = useLocation();
@@ -25,8 +26,13 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <EmailProvider>
-          <Toaster />
-          <Router />
+          <div className="min-h-screen flex flex-col">
+            <Toaster />
+            <main className="flex-grow">
+              <Router />
+            </main>
+            <Footer />
+          </div>
         </EmailProvider>
       </TooltipProvider>
     </QueryClientProvider>

@@ -77,7 +77,7 @@ export class EmailSender {
       }
       
       // Process template with dynamic data and tracking
-      const processed = EmailTemplateProcessor.processTemplate(
+      const processed = await EmailTemplateProcessor.processTemplate(
         template,
         subject,
         recipientData
