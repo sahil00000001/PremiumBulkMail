@@ -3,7 +3,10 @@ export type Recipient = {
   data: Record<string, any>;
   status: 'pending' | 'sent' | 'failed';
   trackingId?: string;
-  openedAt?: string;
+  openedAt?: string | null;
+  lastSeenAt?: string | null;
+  viewCount?: number;
+  totalViewTime?: number;
 };
 
 export type Credentials = {

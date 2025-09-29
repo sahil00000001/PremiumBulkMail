@@ -76,12 +76,12 @@ export default function TrackingDashboard() {
 
 
   return (
-    <div className="space-y-6">
+    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header with refresh button */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-medium text-gray-900">Email Tracking Dashboard</h2>
-          <p className="text-sm text-gray-500">
+          <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white">Email Tracking Dashboard</h2>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             Real-time tracking of email delivery and opens
           </p>
         </div>
@@ -112,15 +112,15 @@ export default function TrackingDashboard() {
         <TabsContent value="overview" className="space-y-6">
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <Card>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <Card className="rounded-xl border border-gray-200/80 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-shadow">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">Total Emails</CardTitle>
+            <CardTitle className="text-xs font-medium text-gray-500 dark:text-gray-400">Total Emails</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             <div className="flex items-center space-x-2">
-              <MailIcon className="h-5 w-5 text-gray-400" />
-              <span className="text-2xl font-semibold text-gray-900">{stats.total}</span>
+              <MailIcon className="h-4 w-4 text-gray-500" />
+              <span className="text-2xl md:text-3xl font-semibold text-indigo-600">{stats.total}</span>
             </div>
           </CardContent>
         </Card>

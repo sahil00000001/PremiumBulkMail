@@ -324,15 +324,20 @@ export function EmailProvider({ children }: { children: ReactNode }) {
             status: string;
             trackingId?: string;
             openedAt?: string | null;
+            lastSeenAt?: string | null;
+            viewCount?: number;
+            totalViewTime?: number;
           }) => ({
             email: r.email,
             data: r.data,
             status: r.status,
             trackingId: r.trackingId,
-            openedAt: r.openedAt
+            openedAt: r.openedAt,
+            lastSeenAt: r.lastSeenAt,
+            totalViewTime: r.totalViewTime || 0
           }));
           console.log('Refreshing tracking data:', updatedRecipients.length, 'recipients');
-          console.log('Recipients with opens:', updatedRecipients.filter(r => r.openedAt).length);
+          console.log('Recipients with opens:', updatedRecipients.filter((r: any) => r.openedAt).length);
           setRecipients(updatedRecipients);
         }
       }
