@@ -66,7 +66,9 @@ export class EmailSender {
     recipientEmail: string,
     recipientData: Record<string, any>,
     template: string,
-    subject: string
+    subject: string,
+    signature?: string,
+    isHtmlMode: boolean = false
   ): Promise<{ success: boolean; trackingId?: string }> {
     try {
       // Verify transporter before sending
@@ -80,7 +82,9 @@ export class EmailSender {
       const processed = await EmailTemplateProcessor.processTemplate(
         template,
         subject,
-        recipientData
+        recipientData,
+        signature,
+        isHtmlMode
       );
       
       const mailOptions = {

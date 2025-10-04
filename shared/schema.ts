@@ -34,6 +34,8 @@ export const batches = pgTable("batches", {
   emailColumn: text("email_column").notNull(), // Which column contains emails
   template: text("template"), // Email template with @ variables
   subject: text("subject"), // Email subject with @ variables
+  signature: text("signature"), // Optional email signature
+  isHtmlMode: boolean("is_html_mode").default(false), // Whether template is HTML or plain text
 });
 
 export const websiteVisitors = pgTable("website_visitors", {
@@ -76,6 +78,8 @@ export const insertBatchSchema = createInsertSchema(batches).pick({
   emailColumn: true,
   template: true,
   subject: true,
+  signature: true,
+  isHtmlMode: true,
 });
 
 export const insertVisitorSchema = createInsertSchema(websiteVisitors).pick({

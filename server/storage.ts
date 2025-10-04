@@ -32,7 +32,7 @@ export interface IStorage {
   getRecipientByTrackingId(trackingId: string): Promise<Email | undefined>;
   
   // Template related methods
-  updateBatchTemplate(batchId: string, template: string, subject: string): Promise<void>;
+  updateBatchTemplate(batchId: string, template: string, subject: string, signature?: string, isHtmlMode?: boolean): Promise<void>;
   
   // Visitor tracking methods
   createVisitorSession(visitor: InsertVisitor): Promise<Visitor>;
@@ -91,7 +91,10 @@ export class MemStorage implements IStorage {
       sentEmails: insertBatch.sentEmails || 0,
       failedEmails: insertBatch.failedEmails || 0,
       template: insertBatch.template || null,
-      subject: insertBatch.subject || null
+      subject: insertBatch.subject || null,
+      signature: insertBatch.signature || null,
+      // Explicitly store boolean value, default to false if undefined
+      isHtmlMode: insertBatch.isHtmlMode === true ? true : false
     };
     this.batchesMap.set(insertBatch.batchId, batch);
     return batch;
@@ -187,11 +190,14 @@ export class MemStorage implements IStorage {
     }
   }
 
-  async updateBatchTemplate(batchId: string, template: string, subject: string): Promise<void> {
+  async updateBatchTemplate(batchId: string, template: string, subject: string, signature?: string, isHtmlMode?: boolean): Promise<void> {
     const batch = this.batchesMap.get(batchId);
     if (batch) {
       batch.template = template;
       batch.subject = subject;
+      batch.signature = signature || null;
+      // Explicitly store boolean value, default to false if undefined
+      batch.isHtmlMode = isHtmlMode === true ? true : false;
       this.batchesMap.set(batchId, batch);
     }
   }

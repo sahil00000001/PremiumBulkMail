@@ -6,7 +6,7 @@ import { EmailTemplateProcessor } from '../utils/emailTemplate';
 export const saveTemplate = async (req: Request, res: Response) => {
   try {
     const { batchId } = req.params;
-    const { subject, template } = req.body;
+    const { subject, template, signature, isHtmlMode } = req.body;
 
     if (!subject || !template) {
       return res.status(400).json({ error: 'Subject and template are required' });
@@ -32,23 +32,10 @@ export const saveTemplate = async (req: Request, res: Response) => {
     
     const availableColumns = Object.keys(firstRecipientData);
     
-    console.log('Template validation:', { template, subject, availableColumns });
-    
-    // Validate template - skip validation for now to fix the saving issue
-    // const validation = EmailTemplateProcessor.validateTemplate(template, subject, availableColumns);
-    // console.log('Validation result:', validation);
-    
-    // if (validation.missingVariables.length > 0) {
-    //   console.log('Missing variables:', validation.missingVariables);
-    //   return res.status(400).json({ 
-    //     error: 'Template contains undefined variables', 
-    //     missingVariables: validation.missingVariables 
-    //   });
-    // }
+    console.log('Template validation:', { template, subject, signature, isHtmlMode, availableColumns });
 
     // Update batch with template
-    batch.template = template;
-    batch.subject = subject;
+    await storage.updateBatchTemplate(batchId, template, subject, signature, isHtmlMode);
 
     res.json({ 
       success: true, 
@@ -72,7 +59,9 @@ export const getTemplate = async (req: Request, res: Response) => {
 
     res.json({
       subject: batch.subject || '',
-      template: batch.template || ''
+      template: batch.template || '',
+      signature: batch.signature || '',
+      isHtmlMode: batch.isHtmlMode === true // Explicitly return boolean based on true value
     });
   } catch (error) {
     console.error('Error getting template:', error);

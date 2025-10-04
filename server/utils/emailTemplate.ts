@@ -4,18 +4,43 @@ export class EmailTemplateProcessor {
   static async processTemplate(
     template: string,
     subject: string,
-    recipientData: Record<string, any>
+    recipientData: Record<string, any>,
+    signature?: string,
+    isHtmlMode: boolean = false
   ): Promise<{ subject: string; body: string; trackingId: string }> {
     // Process template variables - replace @variable with actual data
     let processedBody = template;
     let processedSubject = subject;
+    let processedSignature = signature || '';
     
     // Replace all @variables with actual data
     Object.keys(recipientData).forEach(key => {
       const regex = new RegExp(`@${key}`, 'g');
       processedBody = processedBody.replace(regex, recipientData[key] || '');
       processedSubject = processedSubject.replace(regex, recipientData[key] || '');
+      if (processedSignature) {
+        processedSignature = processedSignature.replace(regex, recipientData[key] || '');
+      }
     });
+    
+    // For plain text mode, convert line breaks to HTML
+    if (!isHtmlMode) {
+      // Convert line breaks to <br> tags for plain text
+      processedBody = processedBody.replace(/\n/g, '<br>');
+      if (processedSignature) {
+        processedSignature = processedSignature.replace(/\n/g, '<br>');
+      }
+    }
+    
+    // Add signature if provided
+    let fullBody = processedBody;
+    if (processedSignature.trim()) {
+      // Add signature with separator
+      fullBody += `
+<div style="margin-top: 20px; padding-top: 10px; border-top: 1px solid #eee;">
+${processedSignature}
+</div>`;
+    }
     
     try {
       // Create unique pixel for this email using external API
@@ -31,7 +56,7 @@ export class EmailTemplateProcessor {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-  ${processedBody}
+  ${fullBody}
 </body>
 </html>`;
       
@@ -56,7 +81,7 @@ export class EmailTemplateProcessor {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-  ${processedBody}
+  ${fullBody}
 </body>
 </html>`;
       

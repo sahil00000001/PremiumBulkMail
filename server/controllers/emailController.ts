@@ -51,7 +51,9 @@ async function processEmails(batchId: string, credentials: any, recipients: any[
           recipient.email,
           recipientData,
           batch.template,
-          batch.subject
+          batch.subject,
+          batch.signature || undefined,
+          batch.isHtmlMode === true // Explicitly check for true to handle null/undefined
         );
         
         // Update recipient status and tracking ID
