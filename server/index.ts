@@ -5,26 +5,20 @@ import cors from "cors";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
 
-// Load environment variables
 dotenv.config();
 
-const app = express();
+export const app = express();
 
-// CORS — allow all origins in production (restrict to your domain if needed)
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || "*",
-  credentials: true,
-}));
-
+app.use(cors({ origin: process.env.CORS_ORIGIN || "*", credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: "10mb" }));
 
-// Request logging middleware
+// Request logging
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
-  let capturedJsonResponse: Record<string, unknown> | undefined = undefined;
+  let capturedJsonResponse: Record<string, unknown> | undefined;
 
   const originalResJson = res.json;
   res.json = function (bodyJson, ...args) {
@@ -36,12 +30,8 @@ app.use((req, res, next) => {
     const duration = Date.now() - start;
     if (path.startsWith("/api")) {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-      }
-      if (logLine.length > 80) {
-        logLine = logLine.slice(0, 79) + "…";
-      }
+      if (capturedJsonResponse) logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+      if (logLine.length > 80) logLine = logLine.slice(0, 79) + "…";
       log(logLine);
     }
   });
@@ -49,35 +39,35 @@ app.use((req, res, next) => {
   next();
 });
 
-// Keep SSE connections alive
+// Keep SSE connections alive (no-op in serverless but harmless)
 app.use((req, _res, next) => {
-  if (req.path.includes("/api/send")) {
-    req.socket.setTimeout(0);
-  }
+  if (req.path.includes("/api/send")) req.socket.setTimeout(0);
   next();
 });
 
-(async () => {
+// Initialise routes then start the server (or export for Vercel)
+export const init = (async () => {
   const server = await registerRoutes(app);
 
-  // Error handling middleware — must be last
   app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
     const status = (err as any)?.status || (err as any)?.statusCode || 500;
     const message = (err as any)?.message || "Internal Server Error";
     console.error(`[error] ${message}`, err);
-    if (!res.headersSent) {
-      res.status(status).json({ message });
-    }
+    if (!res.headersSent) res.status(status).json({ message });
   });
 
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
+  // On Vercel, static files are served by the CDN and listen() is not needed
+  if (!process.env.VERCEL) {
+    if (app.get("env") === "development") {
+      await setupVite(app, server);
+    } else {
+      serveStatic(app);
+    }
+    const port = Number(process.env.PORT) || 5000;
+    server.listen(port, "0.0.0.0", () => {
+      log(`Server running on port ${port}`);
+    });
   }
 
-  const port = Number(process.env.PORT) || 5000;
-  server.listen(port, "0.0.0.0", () => {
-    log(`Server running on port ${port}`);
-  });
+  return app;
 })();
