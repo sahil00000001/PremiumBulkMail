@@ -1,5 +1,7 @@
 // Vercel serverless entry point.
-import { init } from "../server/index.js";
+// Import from the pre-built bundle (esbuild output) so @vercel/node never
+// has to resolve @shared/* TypeScript path aliases itself.
+import { init } from "../dist/index.js";
 
 console.log('[api/index] Module loaded');
 
