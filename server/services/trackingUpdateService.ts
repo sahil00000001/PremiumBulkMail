@@ -6,15 +6,19 @@ export class TrackingUpdateService {
   private readonly UPDATE_INTERVAL_MS = 10000; // Check every 10 seconds
 
   constructor() {
-    this.startPeriodicUpdates();
+    // Don't start background intervals in Vercel serverless — functions are
+    // stateless and the interval would leak across invocations / cause hangs.
+    if (!process.env.VERCEL) {
+      this.startPeriodicUpdates();
+    }
   }
 
   /**
-   * Start periodic tracking updates
+   * Start periodic tracking updates (long-running servers only)
    */
   startPeriodicUpdates() {
     console.log('Starting periodic tracking updates every 10 seconds');
-    
+
     this.updateInterval = setInterval(async () => {
       await this.updateAllTrackingStatuses();
     }, this.UPDATE_INTERVAL_MS);

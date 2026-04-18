@@ -15,18 +15,16 @@ export class EmailSender {
     this.transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 465,
-      secure: true, // use SSL
+      secure: true,
       auth: {
         user: credentials.email,
-        pass: credentials.password // This should be an app password
+        pass: credentials.password,
       },
-      debug: true, // Enable additional debug logs
-      logger: true // Log to console
     });
   }
   
   // Verify transporter connection
-  private async verifyTransporter(): Promise<boolean> {
+  async verifyTransporter(): Promise<boolean> {
     if (this.isTransporterVerified) {
       return true;
     }

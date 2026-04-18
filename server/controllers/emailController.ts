@@ -137,7 +137,7 @@ export const emailController = {
       const emailSender = new EmailSender(validatedCredentials);
       
       // Just verify the transporter without sending an actual email
-      const isVerified = await emailSender['verifyTransporter']();
+      const isVerified = await emailSender.verifyTransporter();
       
       if (isVerified) {
         return res.status(200).json({ 
