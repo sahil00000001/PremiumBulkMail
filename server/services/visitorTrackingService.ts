@@ -22,10 +22,12 @@ export class VisitorTrackingService {
   private readonly SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
 
   constructor() {
-    // Clean up inactive sessions every 5 minutes
-    setInterval(() => {
-      this.cleanupInactiveSessions();
-    }, 5 * 60 * 1000);
+    // Skip background intervals on Vercel serverless — stateless functions
+    if (!process.env.VERCEL) {
+      setInterval(() => {
+        this.cleanupInactiveSessions();
+      }, 5 * 60 * 1000);
+    }
   }
 
   /**

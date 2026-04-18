@@ -126,37 +126,40 @@ export const emailController = {
   // Test email credentials before sending
   testCredentials: async (req: Request, res: Response) => {
     try {
+      console.log('[testCredentials] Step 1: handler entered');
       const { credentials } = req.body;
-      
-      console.log('Testing Gmail credentials...');
-      
+      console.log('[testCredentials] Step 2: body parsed, email =', credentials?.email);
+
       // Validate credentials
       const validatedCredentials = credentialsSchema.parse(credentials);
-      
+      console.log('[testCredentials] Step 3: schema validation passed');
+
       // Initialize email sender with credentials
       const emailSender = new EmailSender(validatedCredentials);
-      
+      console.log('[testCredentials] Step 4: EmailSender constructed');
+
       // Just verify the transporter without sending an actual email
       const isVerified = await emailSender.verifyTransporter();
-      
+      console.log('[testCredentials] Step 5: verifyTransporter returned', isVerified);
+
       if (isVerified) {
-        return res.status(200).json({ 
+        return res.status(200).json({
           success: true,
-          message: 'Gmail credentials verified successfully! You can now send emails.' 
+          message: 'Gmail credentials verified successfully! You can now send emails.',
         });
       } else {
-        return res.status(400).json({ 
+        return res.status(400).json({
           success: false,
           message: 'Failed to verify Gmail credentials. Make sure you are using an App Password, not your regular Gmail password.',
-          details: 'Gmail blocks regular passwords for security reasons. Please generate an App Password from your Google Account.'
+          details: 'Gmail blocks regular passwords for security reasons. Please generate an App Password from your Google Account.',
         });
       }
     } catch (error: any) {
-      console.error('Error testing credentials:', error);
-      return res.status(500).json({ 
+      console.error('[testCredentials] ERROR at step:', error?.message, error?.stack?.split('\n')[1]);
+      return res.status(500).json({
         success: false,
         message: error.message || 'Failed to test credentials',
-        details: 'There was an error testing your Gmail credentials.' 
+        details: 'There was an error testing your Gmail credentials.',
       });
     }
   },

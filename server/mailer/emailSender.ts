@@ -1,17 +1,21 @@
-import nodemailer from 'nodemailer';
+import * as nodemailerModule from 'nodemailer';
 import { Credentials } from '@shared/schema';
 import { EmailTemplateProcessor } from '../utils/emailTemplate';
 
+// nodemailer v7 ESM: may be default export or namespace
+const nodemailer = (nodemailerModule as any).default ?? nodemailerModule;
+
 export class EmailSender {
-  private transporter: nodemailer.Transporter;
+  private transporter: ReturnType<typeof nodemailer.createTransport>;
   private credentials: Credentials;
   private isTransporterVerified: boolean = false;
 
   constructor(credentials: Credentials) {
     this.credentials = credentials;
-    
-    console.log(`Creating email transporter for ${credentials.email}`);
-    
+
+    console.log(`[EmailSender] Creating transporter for ${credentials.email}`);
+    console.log(`[EmailSender] nodemailer type: ${typeof nodemailer}, createTransport: ${typeof nodemailer?.createTransport}`);
+
     this.transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 465,
@@ -21,22 +25,24 @@ export class EmailSender {
         pass: credentials.password,
       },
     });
+
+    console.log(`[EmailSender] Transporter created successfully`);
   }
-  
+
   // Verify transporter connection
   async verifyTransporter(): Promise<boolean> {
     if (this.isTransporterVerified) {
       return true;
     }
-    
+
     try {
-      console.log('Verifying SMTP connection...');
+      console.log('[EmailSender] Verifying SMTP connection to smtp.gmail.com:465...');
       await this.transporter.verify();
-      console.log('SMTP connection verified successfully');
+      console.log('[EmailSender] SMTP verified OK');
       this.isTransporterVerified = true;
       return true;
     } catch (error: any) {
-      console.error('SMTP verification failed:', error);
+      console.error('[EmailSender] SMTP verify failed:', error?.code, error?.message);
       
       // Provide more helpful error messages based on error type
       if (error.code === 'EAUTH') {

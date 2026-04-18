@@ -5,21 +5,24 @@ export const visitorController = {
   // Start a new visitor session
   startSession: async (req: Request, res: Response) => {
     try {
+      console.log('[startSession] Step 1: handler entered');
       const ipAddress = req.ip || req.connection.remoteAddress || 'unknown';
       const userAgent = req.get('User-Agent') || 'unknown';
-      
+      console.log('[startSession] Step 2: ip =', ipAddress);
+
       const sessionId = await visitorTrackingService.startVisitorSession(ipAddress, userAgent);
-      
+      console.log('[startSession] Step 3: session created =', sessionId);
+
       return res.status(200).json({
         success: true,
         sessionId,
-        message: 'Visitor session started'
+        message: 'Visitor session started',
       });
-    } catch (error) {
-      console.error('Error starting visitor session:', error);
+    } catch (error: any) {
+      console.error('[startSession] ERROR:', error?.message, error?.stack?.split('\n')[1]);
       return res.status(500).json({
         success: false,
-        message: 'Failed to start visitor session'
+        message: error?.message || 'Failed to start visitor session',
       });
     }
   },
