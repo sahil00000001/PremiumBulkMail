@@ -63,48 +63,66 @@ export function VisitorCounter() {
     startSession();
   }, []);
 
-  // Setup WebSocket connection for real-time updates
+  // Setup real-time updates — WebSocket with HTTP polling fallback
   useEffect(() => {
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const wsUrl = `${protocol}//${window.location.host}/ws`;
-    
+    let retries = 0;
+    const MAX_RETRIES = 3;
+    let pollInterval: NodeJS.Timeout | null = null;
+    let reconnectTimeout: NodeJS.Timeout | null = null;
+
+    const startPolling = () => {
+      const fetchStats = async () => {
+        try {
+          const res = await fetch('/api/visitors/stats');
+          if (res.ok) {
+            const data = await res.json();
+            if (data.success) setStats(data.data);
+          }
+        } catch {}
+      };
+      fetchStats();
+      pollInterval = setInterval(fetchStats, 30000);
+    };
+
     const connect = () => {
-      wsRef.current = new WebSocket(wsUrl);
+      if (retries >= MAX_RETRIES) {
+        startPolling();
+        return;
+      }
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      wsRef.current = new WebSocket(`${protocol}//${window.location.host}/ws`);
 
       wsRef.current.onopen = () => {
-        console.log('WebSocket connected for visitor tracking');
+        retries = 0;
         setConnected(true);
       };
 
       wsRef.current.onmessage = (event) => {
         try {
           const message = JSON.parse(event.data);
-          if (message.type === 'visitor_stats') {
-            setStats(message.data);
-          }
-        } catch (error) {
-          console.error('Error parsing WebSocket message:', error);
-        }
+          if (message.type === 'visitor_stats') setStats(message.data);
+        } catch {}
       };
 
       wsRef.current.onclose = () => {
-        console.log('WebSocket disconnected');
         setConnected(false);
-        // Reconnect after 3 seconds
-        setTimeout(connect, 3000);
+        retries++;
+        if (retries < MAX_RETRIES) {
+          reconnectTimeout = setTimeout(connect, 3000);
+        } else {
+          startPolling();
+        }
       };
 
-      wsRef.current.onerror = (error) => {
-        console.error('WebSocket error:', error);
-      };
+      wsRef.current.onerror = () => {};
     };
 
     connect();
 
     return () => {
-      if (wsRef.current) {
-        wsRef.current.close();
-      }
+      if (wsRef.current) wsRef.current.close();
+      if (pollInterval) clearInterval(pollInterval);
+      if (reconnectTimeout) clearTimeout(reconnectTimeout);
     };
   }, []);
 
